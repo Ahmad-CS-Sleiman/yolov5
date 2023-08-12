@@ -1,0 +1,2 @@
+..\v5_venv\Scripts\activate
+python .\detect.py --source 0  --nosave
