@@ -35,6 +35,7 @@ import sys
 from pathlib import Path
 
 import torch
+from send_data import send_data
 
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[0]  # YOLOv5 root directory
@@ -161,6 +162,7 @@ def run(
                     s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # add to string
 
                 # Write results
+                message=""
                 for *xyxy, conf, cls in reversed(det):
                     if save_txt:  # Write to file
                         xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
@@ -170,13 +172,29 @@ def run(
 
                     if save_img or save_crop or view_img:  # Add bbox to image
                         c = int(cls)  # integer class
-                        label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}')
-                        annotator.box_label(xyxy, label, color=colors(c, True))
+                        label = None if hide_labels else (names[c] if hide_conf else f'{names[c]} {conf:.2f}') #####
+
+
+
+
+
+                        
+                        message+=f"detected label : {label} at {xyxy[0]}  ,{xyxy[1]}  ,{xyxy[2]}  ,{xyxy[3]} \n"
+                        
+
+
+
+
+
+
+                        annotator.box_label(xyxy, label, color=colors(c, True))                                #####
                     if save_crop:
                         save_one_box(xyxy, imc, file=save_dir / 'crops' / names[c] / f'{p.stem}.jpg', BGR=True)
-
+                # print(f"{message}********************************************** \n \n \n ")
+                # send_data(message)
             # Stream results
             im0 = annotator.result()
+            
             if view_img:
                 if platform.system() == 'Linux' and p not in windows:
                     windows.append(p)
